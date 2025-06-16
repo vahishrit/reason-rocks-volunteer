@@ -17,7 +17,9 @@
   }
 
   html, body {
+    
     font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
     background-color: #f9fafb;
   }
+  #lovable-badge{display:none!important}
 }
