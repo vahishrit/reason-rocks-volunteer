@@ -1,6 +1,6 @@
 
 import React, { createContext, useState, useEffect, useContext } from "react";
-import { supabase } from "@/utils/supabaseClient";
+import { supabase } from "@/integrations/supabase/client";
 
 type User = {
   id: string;
@@ -25,32 +25,52 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const session = supabase.auth.getSession();
-    session.then(({data: {session}}) => {
-      if(session?.user) {
-        setUser({
-          id: session.user.id,
-          email: session.user.email!,
-          ...session.user.user_metadata
-        });
+    // Set up auth state listener first
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.id);
+        
+        if (session?.user) {
+          // Fetch user profile data
+          try {
+            const { data: profile } = await supabase
+              .from('users')
+              .select('*')
+              .eq('id', session.user.id)
+              .single();
+            
+            setUser({
+              id: session.user.id,
+              email: session.user.email!,
+              full_name: profile?.full_name,
+              grade: profile?.grade?.toString(),
+              isAdmin: profile?.is_admin || false
+            });
+          } catch (error) {
+            console.error('Error fetching user profile:', error);
+            setUser({
+              id: session.user.id,
+              email: session.user.email!,
+              ...session.user.user_metadata
+            });
+          }
+        } else {
+          setUser(null);
+        }
+        setLoading(false);
       }
-      setLoading(false);
-    });
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+    );
+
+    // Then check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
-        setUser({
-          id: session.user.id,
-          email: session.user.email!,
-          ...session.user.user_metadata
-        });
+        // This will trigger the auth state change listener above
       } else {
-        setUser(null);
+        setLoading(false);
       }
-      setLoading(false);
     });
-    return () => {
-      listener.subscription.unsubscribe();
-    }
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const signIn = async (email: string, password: string) => {
@@ -63,10 +83,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signUp = async ({ email, password, full_name, grade }: { email: string; password: string; full_name: string; grade: string; }) => {
+    const redirectUrl = `${window.location.origin}/`;
+    
     return await supabase.auth.signUp({
       email,
       password,
       options: {
+        emailRedirectTo: redirectUrl,
         data: { full_name, grade }
       }
     });
