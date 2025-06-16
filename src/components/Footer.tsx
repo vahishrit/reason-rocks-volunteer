@@ -6,7 +6,7 @@ const Footer = () => (
     <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-2 px-4 text-sm">
       <span className="font-bold">Rocks for a Reason</span>
       <span>
-        &copy; {new Date().getFullYear()} Westfield High School – Built with 💚
+        &copy; {new Date().getFullYear()} Westfield High School 
       </span>
     </div>
   </footer>
