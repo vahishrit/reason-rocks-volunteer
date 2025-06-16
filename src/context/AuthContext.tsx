@@ -25,61 +25,96 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log('Setting up auth state listener');
+    
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state changed:', event, session?.user?.id);
         
         if (session?.user) {
-          // Fetch user profile data
-          try {
-            const { data: profile } = await supabase
-              .from('users')
-              .select('*')
-              .eq('id', session.user.id)
-              .single();
-            
-            setUser({
-              id: session.user.id,
-              email: session.user.email!,
-              full_name: profile?.full_name,
-              grade: profile?.grade?.toString(),
-              isAdmin: profile?.is_admin || false
-            });
-          } catch (error) {
-            console.error('Error fetching user profile:', error);
-            setUser({
-              id: session.user.id,
-              email: session.user.email!,
-              ...session.user.user_metadata
-            });
-          }
+          // Use setTimeout to prevent deadlock when calling other Supabase functions
+          setTimeout(async () => {
+            try {
+              const { data: profile } = await supabase
+                .from('users')
+                .select('*')
+                .eq('id', session.user.id)
+                .single();
+              
+              setUser({
+                id: session.user.id,
+                email: session.user.email!,
+                full_name: profile?.full_name,
+                grade: profile?.grade?.toString(),
+                isAdmin: profile?.is_admin || false
+              });
+            } catch (error) {
+              console.error('Error fetching user profile:', error);
+              // Fallback to basic user data
+              setUser({
+                id: session.user.id,
+                email: session.user.email!,
+                full_name: session.user.user_metadata?.full_name,
+                grade: session.user.user_metadata?.grade,
+                isAdmin: false
+              });
+            }
+            setLoading(false);
+          }, 0);
         } else {
           setUser(null);
+          setLoading(false);
         }
-        setLoading(false);
       }
     );
 
     // Then check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        // This will trigger the auth state change listener above
-      } else {
+    const checkSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error('Error getting session:', error);
+          setLoading(false);
+          return;
+        }
+        
+        if (!session) {
+          setLoading(false);
+        }
+        // If session exists, the auth state change listener will handle it
+      } catch (error) {
+        console.error('Error in checkSession:', error);
         setLoading(false);
       }
-    });
+    };
 
-    return () => subscription.unsubscribe();
+    checkSession();
+
+    return () => {
+      console.log('Cleaning up auth subscription');
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    return await supabase.auth.signInWithPassword({ email, password });
+    setLoading(true);
+    try {
+      const result = await supabase.auth.signInWithPassword({ email, password });
+      return result;
+    } catch (error) {
+      setLoading(false);
+      throw error;
+    }
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
+    try {
+      await supabase.auth.signOut();
+      setUser(null);
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
   };
 
   const signUp = async ({ email, password, full_name, grade }: { email: string; password: string; full_name: string; grade: string; }) => {
