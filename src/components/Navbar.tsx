@@ -26,7 +26,6 @@ const Navbar = () => {
     <nav className="bg-primary text-white px-8 py-3 flex items-center justify-between shadow-lg">
       <div className="flex items-center gap-3">
         <Link to="/dashboard" className="flex items-center font-bold text-xl tracking-tight hover:opacity-90 transition">
-          <span className="mr-2 text-accent font-extrabold">🪨</span>
           Rocks for a Reason
         </Link>
       </div>
