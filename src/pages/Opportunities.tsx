@@ -31,46 +31,6 @@ const Opportunities = () => {
     location: ''
   });
 
-  // Demo data for initial display
-  const demoOps = [
-    {
-      id: 'demo-1',
-      title: "Food Pantry Assistant",
-      org: "Westfield Food Bank",
-      tags: ["Community", "Food"],
-      signup_link: "https://signup.example.com/food",
-      location: "Westfield, IN",
-      description: "Help organize and hand out food to local families in need.",
-      category: "Community",
-      volunteer_type: "Community",
-      people_needed: 10,
-    },
-    {
-      id: 'demo-2',
-      title: "Animal Shelter Helper",
-      org: "Hamilton Co. Animal Shelter",
-      tags: ["Animals", "Care"],
-      signup_link: "https://signup.example.com/animals",
-      location: "Noblesville, IN",
-      description: "Support pet care and adoption event operations.",
-      category: "Animals",
-      volunteer_type: "Animals",
-      people_needed: 5,
-    },
-    {
-      id: 'demo-3',
-      title: "Park Cleanup Crew",
-      org: "Friends of Westfield Parks",
-      tags: ["Environment", "Outdoors"],
-      signup_link: "https://signup.example.com/parks",
-      location: "Grand Park, Westfield",
-      description: "Join us to keep our city parks clean and beautiful.",
-      category: "Environment",
-      volunteer_type: "Environment",
-      people_needed: 20,
-    },
-  ];
-
   const fetchOpportunities = async () => {
     try {
       const { data, error } = await supabase
@@ -80,15 +40,28 @@ const Opportunities = () => {
 
       if (error) throw error;
 
-      // Combine database opportunities with demo data
-      const allOpportunities = [...demoOps, ...(data || [])];
-      setOpportunities(allOpportunities);
-      setFilteredOpportunities(allOpportunities);
+      // Map database data to match component expectations
+      const mappedOpportunities = (data || []).map(op => ({
+        id: op.id,
+        title: op.title,
+        org: undefined, // Not in database schema
+        tags: op.tags || [],
+        signup_link: op.signup_link || '',
+        location: op.location,
+        description: op.description,
+        category: op.category,
+        start_date: op.start_date,
+        end_date: op.end_date,
+        people_needed: op.people_needed,
+        volunteer_type: op.volunteer_type,
+      }));
+
+      setOpportunities(mappedOpportunities);
+      setFilteredOpportunities(mappedOpportunities);
     } catch (error) {
       console.error('Error fetching opportunities:', error);
-      // Fallback to demo data if database fetch fails
-      setOpportunities(demoOps);
-      setFilteredOpportunities(demoOps);
+      setOpportunities([]);
+      setFilteredOpportunities([]);
     } finally {
       setLoading(false);
     }
@@ -187,7 +160,10 @@ const Opportunities = () => {
       
       {filteredOpportunities.length === 0 && (
         <div className="text-center py-12 text-gray-500">
-          No opportunities match your current filters. Try adjusting your search criteria.
+          {opportunities.length === 0 
+            ? "No volunteer opportunities available at this time." 
+            : "No opportunities match your current filters. Try adjusting your search criteria."
+          }
         </div>
       )}
     </div>

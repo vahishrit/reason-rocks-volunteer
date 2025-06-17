@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 
 type HoursEntry = {
@@ -28,9 +29,13 @@ const AdminHoursTable = () => {
   const { toast } = useToast();
   const [hours, setHours] = useState<HoursEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [comments, setComments] = useState<{ [key: string]: string }>({});
 
   const fetchAllHours = async () => {
-    if (!user?.isAdmin) return;
+    if (!user?.isAdmin) {
+      setLoading(false);
+      return;
+    }
 
     try {
       const { data, error } = await supabase
@@ -42,6 +47,7 @@ const AdminHoursTable = () => {
             email
           )
         `)
+        .eq('status', 'pending')
         .order('submitted_at', { ascending: false });
 
       if (error) throw error;
@@ -64,25 +70,47 @@ const AdminHoursTable = () => {
 
   const updateHoursStatus = async (hoursId: string, status: 'approved' | 'rejected') => {
     try {
-      const updateData: any = {
-        status,
-      };
+      const hoursEntry = hours.find(h => h.id === hoursId);
+      if (!hoursEntry) return;
 
-      if (status === 'approved') {
-        updateData.approved_by = user?.id;
-        updateData.approved_at = new Date().toISOString();
-      }
+      // Move to previous_hours table
+      const { error: insertError } = await supabase
+        .from('previous_hours')
+        .insert({
+          original_hours_id: hoursId,
+          user_id: hoursEntry.user_id,
+          date: hoursEntry.date,
+          hours: hoursEntry.hours,
+          custom_title: hoursEntry.custom_title,
+          description: hoursEntry.description,
+          proof_url: hoursEntry.proof_url,
+          status,
+          review_comment: comments[hoursId] || null,
+          submitted_at: hoursEntry.submitted_at,
+          approved_by: user?.id,
+          approved_at: status === 'approved' ? new Date().toISOString() : null,
+        });
 
-      const { error } = await supabase
+      if (insertError) throw insertError;
+
+      // Delete from current hours table
+      const { error: deleteError } = await supabase
         .from('hours')
-        .update(updateData)
+        .delete()
         .eq('id', hoursId);
 
-      if (error) throw error;
+      if (deleteError) throw deleteError;
 
       toast({
         title: "Success",
         description: `Hours ${status} successfully.`,
+      });
+
+      // Clear the comment for this entry
+      setComments(prev => {
+        const newComments = { ...prev };
+        delete newComments[hoursId];
+        return newComments;
       });
 
       fetchAllHours();
@@ -94,6 +122,13 @@ const AdminHoursTable = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const handleCommentChange = (hoursId: string, comment: string) => {
+    setComments(prev => ({
+      ...prev,
+      [hoursId]: comment
+    }));
   };
 
   const getStatusBadge = (status: string | null) => {
@@ -123,7 +158,7 @@ const AdminHoursTable = () => {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>All Volunteer Hours - Admin View</CardTitle>
+          <CardTitle>Pending Volunteer Hours - Admin Review</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8 text-gray-500">Loading...</div>
@@ -135,12 +170,12 @@ const AdminHoursTable = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>All Volunteer Hours - Admin Review</CardTitle>
+        <CardTitle>Pending Volunteer Hours - Admin Review</CardTitle>
       </CardHeader>
       <CardContent>
         {hours.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            No volunteer hours submitted yet.
+            No pending volunteer hours to review.
           </div>
         ) : (
           <Table>
@@ -152,6 +187,7 @@ const AdminHoursTable = () => {
                 <TableHead>Hours</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Submitted</TableHead>
+                <TableHead>Review Comment</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -197,24 +233,30 @@ const AdminHoursTable = () => {
                     {entry.submitted_at ? new Date(entry.submitted_at).toLocaleDateString() : '-'}
                   </TableCell>
                   <TableCell>
-                    {entry.status === 'pending' && (
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          onClick={() => updateHoursStatus(entry.id, 'approved')}
-                          className="bg-green-600 hover:bg-green-700"
-                        >
-                          Approve
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => updateHoursStatus(entry.id, 'rejected')}
-                        >
-                          Reject
-                        </Button>
-                      </div>
-                    )}
+                    <Textarea
+                      placeholder="Add review comment..."
+                      value={comments[entry.id] || ''}
+                      onChange={(e) => handleCommentChange(entry.id, e.target.value)}
+                      className="min-h-[80px] text-sm"
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-col gap-2">
+                      <Button
+                        size="sm"
+                        onClick={() => updateHoursStatus(entry.id, 'approved')}
+                        className="bg-green-600 hover:bg-green-700"
+                      >
+                        Approve
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => updateHoursStatus(entry.id, 'rejected')}
+                      >
+                        Reject
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

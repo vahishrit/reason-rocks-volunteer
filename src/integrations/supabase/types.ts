@@ -72,41 +72,112 @@ export type Database = {
           created_at: string | null
           created_by: string | null
           description: string
+          end_date: string | null
           id: string
           image_url: string | null
           location: string | null
+          people_needed: number | null
           signup_link: string | null
+          start_date: string | null
           tags: string[] | null
           title: string
+          volunteer_type: string | null
         }
         Insert: {
           category?: string | null
           created_at?: string | null
           created_by?: string | null
           description: string
+          end_date?: string | null
           id?: string
           image_url?: string | null
           location?: string | null
+          people_needed?: number | null
           signup_link?: string | null
+          start_date?: string | null
           tags?: string[] | null
           title: string
+          volunteer_type?: string | null
         }
         Update: {
           category?: string | null
           created_at?: string | null
           created_by?: string | null
           description?: string
+          end_date?: string | null
           id?: string
           image_url?: string | null
           location?: string | null
+          people_needed?: number | null
           signup_link?: string | null
+          start_date?: string | null
           tags?: string[] | null
           title?: string
+          volunteer_type?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "opportunities_created_by_fkey"
             columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      previous_hours: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          custom_title: string | null
+          date: string
+          description: string | null
+          hours: number
+          id: string
+          original_hours_id: string
+          processed_at: string | null
+          proof_url: string | null
+          review_comment: string | null
+          status: string
+          submitted_at: string | null
+          user_id: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          custom_title?: string | null
+          date: string
+          description?: string | null
+          hours: number
+          id?: string
+          original_hours_id: string
+          processed_at?: string | null
+          proof_url?: string | null
+          review_comment?: string | null
+          status: string
+          submitted_at?: string | null
+          user_id: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          custom_title?: string | null
+          date?: string
+          description?: string | null
+          hours?: number
+          id?: string
+          original_hours_id?: string
+          processed_at?: string | null
+          proof_url?: string | null
+          review_comment?: string | null
+          status?: string
+          submitted_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "previous_hours_approved_by_fkey"
+            columns: ["approved_by"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
