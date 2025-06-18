@@ -42,6 +42,16 @@ const Navbar = () => {
         ))}
         {user ? (
           <>
+            {user.isAdmin && (
+              <li>
+                <Link
+                  to="/admin"
+                  className={`hover:text-accent transition ${location.pathname === "/admin" ? "border-b-2 border-accent" : ""}`}
+                >
+                  Admin
+                </Link>
+              </li>
+            )}
             <li className="flex items-center gap-2 pl-2">
               <User size={20} className="text-accent" />
               <span className="font-medium">{user.full_name || user.email}</span>
@@ -57,6 +67,7 @@ const Navbar = () => {
           <>
             <li><Link to="/login" className="font-medium hover:text-accent transition">Login</Link></li>
             <li><Link to="/register" className="font-medium hover:text-accent transition">Register</Link></li>
+            <li><Link to="/admin-register" className="font-medium hover:text-accent transition">Admin Register</Link></li>
           </>
         )}
       </ul>

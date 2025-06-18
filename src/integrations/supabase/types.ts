@@ -127,6 +127,7 @@ export type Database = {
       }
       previous_hours: {
         Row: {
+          admin_signature: string | null
           approved_at: string | null
           approved_by: string | null
           custom_title: string | null
@@ -143,6 +144,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          admin_signature?: string | null
           approved_at?: string | null
           approved_by?: string | null
           custom_title?: string | null
@@ -159,6 +161,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          admin_signature?: string | null
           approved_at?: string | null
           approved_by?: string | null
           custom_title?: string | null
@@ -192,6 +195,7 @@ export type Database = {
           grade: number
           id: string
           is_admin: boolean | null
+          opportunity_id: string | null
         }
         Insert: {
           created_at?: string | null
@@ -200,6 +204,7 @@ export type Database = {
           grade: number
           id: string
           is_admin?: boolean | null
+          opportunity_id?: string | null
         }
         Update: {
           created_at?: string | null
@@ -208,8 +213,17 @@ export type Database = {
           grade?: number
           id?: string
           is_admin?: boolean | null
+          opportunity_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "users_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

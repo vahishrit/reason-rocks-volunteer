@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 
 type HoursEntry = {
@@ -18,9 +19,13 @@ type HoursEntry = {
   proof_url: string | null;
   submitted_at: string | null;
   user_id: string;
+  opportunity_id: string | null;
   users: {
     full_name: string;
     email: string;
+  };
+  opportunities?: {
+    title: string;
   };
 };
 
@@ -30,6 +35,7 @@ const AdminHoursTable = () => {
   const [hours, setHours] = useState<HoursEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [comments, setComments] = useState<{ [key: string]: string }>({});
+  const [signatures, setSignatures] = useState<{ [key: string]: string }>({});
 
   const fetchAllHours = async () => {
     if (!user?.isAdmin) {
@@ -38,17 +44,36 @@ const AdminHoursTable = () => {
     }
 
     try {
-      const { data, error } = await supabase
+      // Fetch user's opportunity assignment
+      const { data: userProfile, error: userError } = await supabase
+        .from('users')
+        .select('opportunity_id')
+        .eq('id', user.id)
+        .single();
+
+      if (userError) throw userError;
+
+      let query = supabase
         .from('hours')
         .select(`
           *,
           users (
             full_name,
             email
+          ),
+          opportunities (
+            title
           )
         `)
         .eq('status', 'pending')
         .order('submitted_at', { ascending: false });
+
+      // If user has an assigned opportunity, only show hours for that opportunity
+      if (userProfile?.opportunity_id) {
+        query = query.eq('opportunity_id', userProfile.opportunity_id);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       setHours(data || []);
@@ -69,6 +94,16 @@ const AdminHoursTable = () => {
   }, [user]);
 
   const updateHoursStatus = async (hoursId: string, status: 'approved' | 'rejected') => {
+    const signature = signatures[hoursId]?.trim();
+    if (!signature) {
+      toast({
+        title: "Signature Required",
+        description: "Please enter your full name to sign off on this decision.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const hoursEntry = hours.find(h => h.id === hoursId);
       if (!hoursEntry) return;
@@ -89,6 +124,7 @@ const AdminHoursTable = () => {
           submitted_at: hoursEntry.submitted_at,
           approved_by: user?.id,
           approved_at: status === 'approved' ? new Date().toISOString() : null,
+          admin_signature: signature,
         });
 
       if (insertError) throw insertError;
@@ -103,14 +139,20 @@ const AdminHoursTable = () => {
 
       toast({
         title: "Success",
-        description: `Hours ${status} successfully.`,
+        description: `Hours ${status} successfully and signed.`,
       });
 
-      // Clear the comment for this entry
+      // Clear the comment and signature for this entry
       setComments(prev => {
         const newComments = { ...prev };
         delete newComments[hoursId];
         return newComments;
+      });
+
+      setSignatures(prev => {
+        const newSignatures = { ...prev };
+        delete newSignatures[hoursId];
+        return newSignatures;
       });
 
       fetchAllHours();
@@ -128,6 +170,13 @@ const AdminHoursTable = () => {
     setComments(prev => ({
       ...prev,
       [hoursId]: comment
+    }));
+  };
+
+  const handleSignatureChange = (hoursId: string, signature: string) => {
+    setSignatures(prev => ({
+      ...prev,
+      [hoursId]: signature
     }));
   };
 
@@ -175,7 +224,7 @@ const AdminHoursTable = () => {
       <CardContent>
         {hours.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            No pending volunteer hours to review.
+            No pending volunteer hours to review for your assigned opportunity.
           </div>
         ) : (
           <Table>
@@ -185,9 +234,10 @@ const AdminHoursTable = () => {
                 <TableHead>Date</TableHead>
                 <TableHead>Activity</TableHead>
                 <TableHead>Hours</TableHead>
+                <TableHead>Opportunity</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Submitted</TableHead>
                 <TableHead>Review Comment</TableHead>
+                <TableHead>Admin Signature</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -224,20 +274,29 @@ const AdminHoursTable = () => {
                     </div>
                   </TableCell>
                   <TableCell className="font-medium">{entry.hours}</TableCell>
+                  <TableCell className="text-sm">
+                    {entry.opportunities?.title || 'No opportunity linked'}
+                  </TableCell>
                   <TableCell>
                     <span className={getStatusBadge(entry.status)}>
                       {entry.status || 'pending'}
                     </span>
-                  </TableCell>
-                  <TableCell className="text-sm text-gray-500">
-                    {entry.submitted_at ? new Date(entry.submitted_at).toLocaleDateString() : '-'}
                   </TableCell>
                   <TableCell>
                     <Textarea
                       placeholder="Add review comment..."
                       value={comments[entry.id] || ''}
                       onChange={(e) => handleCommentChange(entry.id, e.target.value)}
-                      className="min-h-[80px] text-sm"
+                      className="min-h-[60px] text-sm"
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Input
+                      placeholder="Enter your full name to sign"
+                      value={signatures[entry.id] || ''}
+                      onChange={(e) => handleSignatureChange(entry.id, e.target.value)}
+                      className="text-sm"
+                      required
                     />
                   </TableCell>
                   <TableCell>

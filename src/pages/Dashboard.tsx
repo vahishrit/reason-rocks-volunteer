@@ -4,6 +4,8 @@ import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import HoursForm from "@/components/HoursForm";
 import HoursTable from "@/components/HoursTable";
+import PreviousHoursTable from "@/components/PreviousHoursTable";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type HoursEntry = {
   id: string;
@@ -36,12 +38,24 @@ const Dashboard = () => {
 
       setHours(data || []);
       
-      // Calculate total approved hours
-      const approvedHours = (data || [])
+      // Calculate total approved hours from both current and previous hours
+      const currentApprovedHours = (data || [])
         .filter(entry => entry.status === 'approved')
         .reduce((total, entry) => total + entry.hours, 0);
+
+      // Get approved hours from previous_hours table
+      const { data: previousHours, error: previousError } = await supabase
+        .from('previous_hours')
+        .select('hours')
+        .eq('user_id', user.id)
+        .eq('status', 'approved');
+
+      if (previousError) throw previousError;
+
+      const previousApprovedHours = (previousHours || [])
+        .reduce((total, entry) => total + entry.hours, 0);
       
-      setTotalApprovedHours(approvedHours);
+      setTotalApprovedHours(currentApprovedHours + previousApprovedHours);
     } catch (error) {
       console.error('Error fetching hours:', error);
     } finally {
@@ -69,7 +83,18 @@ const Dashboard = () => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         <div>
-          <HoursTable hours={hours} loading={loading} />
+          <Tabs defaultValue="current" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="current">Current Hours</TabsTrigger>
+              <TabsTrigger value="previous">Previous Hours</TabsTrigger>
+            </TabsList>
+            <TabsContent value="current">
+              <HoursTable hours={hours} loading={loading} />
+            </TabsContent>
+            <TabsContent value="previous">
+              <PreviousHoursTable />
+            </TabsContent>
+          </Tabs>
         </div>
         <div>
           <HoursForm onHoursSubmitted={handleHoursSubmitted} />
