@@ -17,7 +17,7 @@ const Contact = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background py-12">
       <div className="w-full max-w-md mx-4">
-        <h1 className="text-3xl font-bold text-center text-foreground mb-8">CONTACT</h1>
+        <h1 className="text-3xl font-sunborn font-bold text-center text-foreground mb-8">CONTACT</h1>
         <form onSubmit={handleSubmit} className="bg-card rounded-2xl p-8 shadow-2xl space-y-6">
           <div>
             <label className="block font-semibold mb-2 text-card-foreground">Name</label>

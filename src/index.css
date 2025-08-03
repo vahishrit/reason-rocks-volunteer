@@ -5,27 +5,27 @@
 
 @layer base {
   :root {
-    --background: 145 20% 15%;  /* dark green background */
-    --foreground: 145 10% 90%;
-    --card: 145 15% 20%;
-    --card-foreground: 145 10% 90%;
-    --muted: 145 15% 25%;
-    --muted-foreground: 145 10% 70%;
-    --border: 145 15% 30%;
-    --input: 145 15% 25%;
+    --background: 145 25% 20%;  /* dark forest green background */
+    --foreground: 45 15% 85%;   /* light beige text */
+    --card: 45 25% 75%;         /* light beige/green cards */
+    --card-foreground: 145 40% 15%; /* dark green text on cards */
+    --muted: 45 20% 70%;
+    --muted-foreground: 145 30% 25%;
+    --border: 145 20% 40%;
+    --input: 45 25% 75%;        /* light beige inputs */
 
-    --primary: 145 30% 25%;   /* medium green */
-    --primary-foreground: 145 10% 90%;
-    --secondary: 145 20% 30%;
-    --secondary-foreground: 145 10% 90%;
-    --accent: 48 95% 54%;     /* gold/yellow */
+    --primary: 145 30% 25%;     /* dark green for navbar */
+    --primary-foreground: 45 15% 85%;
+    --secondary: 45 20% 70%;    /* light green for secondary elements */
+    --secondary-foreground: 145 40% 15%;
+    --accent: 48 95% 54%;       /* gold/yellow */
     --accent-foreground: 145 60% 15%;
 
     --radius: 0.75rem;
   }
 
   html, body {
-    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    font-family: 'glacial-indifference', 'Sunborn', 'Inter', sans-serif;
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
   }

@@ -26,9 +26,9 @@ const OpportunityFilters = ({ filters, onFilterChange, onClearFilters }: FilterP
   };
 
   return (
-    <Card className="mb-6">
+    <Card className="mb-6 bg-card border-border">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-card-foreground font-sunborn">
           <Filter size={20} />
           Filter Opportunities
         </CardTitle>

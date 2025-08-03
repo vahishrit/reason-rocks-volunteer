@@ -67,9 +67,9 @@ const HoursForm = ({ onHoursSubmitted }: { onHoursSubmitted: () => void }) => {
   };
 
   return (
-    <Card>
+    <Card className="bg-card border-border">
       <CardHeader>
-        <CardTitle>Log New Hours</CardTitle>
+        <CardTitle className="text-card-foreground font-sunborn">Log New Hours</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">

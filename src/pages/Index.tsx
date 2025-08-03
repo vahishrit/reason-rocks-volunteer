@@ -17,7 +17,7 @@ const Index = () => {
     <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden">
       <div className="container mx-auto px-6 flex items-center justify-between max-w-6xl">
         <div className="flex-1 max-w-lg">
-          <h1 className="text-5xl font-extrabold text-foreground mb-6 leading-tight">
+          <h1 className="text-5xl font-sunborn font-extrabold text-foreground mb-6 leading-tight">
             ROCKS FOR A<br />REASON
           </h1>
           <p className="text-lg text-muted-foreground mb-8 leading-relaxed">

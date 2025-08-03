@@ -30,13 +30,13 @@ const FAQ = () => {
   return (
     <div className="min-h-screen bg-background py-12">
       <div className="container max-w-3xl mx-auto px-4">
-        <h1 className="text-3xl font-bold text-center text-foreground mb-12">FAQ</h1>
+        <h1 className="text-3xl font-sunborn font-bold text-center text-foreground mb-12">FAQ</h1>
         <div className="space-y-4">
           {faqs.map((f, idx) => (
             <div key={f.q} className="bg-card rounded-xl overflow-hidden shadow-lg">
               <button
                 onClick={() => setOpen(open === idx ? null : idx)}
-                className="flex w-full justify-between items-center py-4 px-6 bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-all font-semibold text-left"
+                className="flex w-full justify-between items-center py-4 px-6 bg-card text-card-foreground hover:bg-card/80 transition-all font-semibold text-left"
               >
                 <span className="text-lg">{f.q}</span>
                 <span className="text-2xl font-bold ml-4 flex-shrink-0">

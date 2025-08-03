@@ -23,13 +23,12 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-primary text-white px-8 py-3 flex items-center justify-between shadow-lg">
-      <div className="flex items-center gap-3">
-        <Link to="/dashboard" className="flex items-center font-bold text-xl tracking-tight hover:opacity-90 transition">
-          Rocks for a Reason
+    <nav className="bg-primary text-primary-foreground px-8 py-6 flex items-center justify-center shadow-lg">
+      <div className="container max-w-6xl mx-auto flex items-center justify-between">
+        <Link to="/dashboard" className="font-sunborn font-bold text-xl tracking-tight hover:opacity-90 transition">
+          ROCKS FOR A REASON
         </Link>
-      </div>
-      <ul className="flex gap-6 items-center">
+        <ul className="flex gap-8 items-center justify-center flex-1 ml-8">
         {navLinks.map(({ to, label }) => (
           <li key={to}>
             <Link
@@ -70,7 +69,8 @@ const Navbar = () => {
             <li><Link to="/admin-register" className="font-medium hover:text-accent transition">Admin Register</Link></li>
           </>
         )}
-      </ul>
+        </ul>
+      </div>
     </nav>
   );
 };

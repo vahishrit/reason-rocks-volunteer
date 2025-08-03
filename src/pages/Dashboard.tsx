@@ -72,17 +72,18 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="container py-12 min-h-[70vh]">
-      <h1 className="text-3xl font-bold text-primary mb-3">
-        Welcome, {user?.full_name || 'Student'}!
-      </h1>
-      <div className="mb-8">
-        <span className="text-lg text-primary-light">
-          Total Approved Hours: <b>{totalApprovedHours}</b>
-        </span>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        <div>
+    <div className="min-h-screen bg-background py-12">
+      <div className="container mx-auto px-4">
+        <h1 className="text-3xl font-sunborn font-bold text-foreground mb-3">
+          Welcome, {user?.full_name || 'Student'}!
+        </h1>
+        <div className="mb-8">
+          <span className="text-lg text-foreground">
+            Total Approved Hours: <b>{totalApprovedHours}</b>
+          </span>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div>
           <Tabs defaultValue="current" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="current">Current Hours</TabsTrigger>
@@ -95,9 +96,10 @@ const Dashboard = () => {
               <PreviousHoursTable />
             </TabsContent>
           </Tabs>
-        </div>
-        <div>
-          <HoursForm onHoursSubmitted={handleHoursSubmitted} />
+          </div>
+          <div>
+            <HoursForm onHoursSubmitted={handleHoursSubmitted} />
+          </div>
         </div>
       </div>
     </div>

@@ -61,7 +61,9 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Inter', 'Segoe UI', 'sans-serif']
+        sans: ['glacial-indifference', 'Sunborn', 'Inter', 'sans-serif'],
+        sunborn: ['Sunborn', 'sans-serif'],
+        glacial: ['glacial-indifference', 'sans-serif']
       },
       borderRadius: {
         lg: '1rem',
