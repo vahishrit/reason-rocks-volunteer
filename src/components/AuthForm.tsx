@@ -60,29 +60,29 @@ const AuthForm: React.FC<Props> = ({ mode }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-xl p-8 max-w-md mx-auto mt-8 space-y-6 animate-fade-in">
+    <form onSubmit={handleSubmit} className="space-y-6">
       {mode === "register" && (
         <div>
-          <label className="block text-primary font-semibold mb-1">Full Name</label>
+          <label className="block text-card-foreground font-semibold mb-2">Full Name</label>
           <input
             type="text"
             name="full_name"
             value={form.full_name}
             onChange={handleChange}
             required
-            className="w-full border rounded-lg px-4 py-2"
+            className="w-full bg-input border border-border rounded-lg px-4 py-3 text-card-foreground focus:ring-2 focus:ring-accent focus:border-transparent"
           />
         </div>
       )}
       {mode === "register" && (
         <div>
-          <label className="block text-primary font-semibold mb-1">Grade</label>
+          <label className="block text-card-foreground font-semibold mb-2">Grade</label>
           <select
             name="grade"
             value={form.grade}
             onChange={handleChange}
             required
-            className="w-full border rounded-lg px-4 py-2"
+            className="w-full bg-input border border-border rounded-lg px-4 py-3 text-card-foreground focus:ring-2 focus:ring-accent focus:border-transparent"
           >
             <option value="">Select Grade</option>
             {gradeOptions.map(g => <option key={g} value={g}>{g}</option>)}
@@ -90,7 +90,7 @@ const AuthForm: React.FC<Props> = ({ mode }) => {
         </div>
       )}
       <div>
-        <label className="block text-primary font-semibold mb-1">School Email</label>
+        <label className="block text-card-foreground font-semibold mb-2">School Email</label>
         <input
           type="email"
           name="email"
@@ -98,29 +98,31 @@ const AuthForm: React.FC<Props> = ({ mode }) => {
           onChange={handleChange}
           required
           pattern=".+@wws\.k12\.in\.us"
-          className="w-full border rounded-lg px-4 py-2"
+          className="w-full bg-input border border-border rounded-lg px-4 py-3 text-card-foreground focus:ring-2 focus:ring-accent focus:border-transparent"
         />
       </div>
       <div>
-        <label className="block text-primary font-semibold mb-1">Password</label>
+        <label className="block text-card-foreground font-semibold mb-2">Password</label>
         <input
           type="password"
           name="password"
           value={form.password}
           onChange={handleChange}
           required
-          className="w-full border rounded-lg px-4 py-2"
+          className="w-full bg-input border border-border rounded-lg px-4 py-3 text-card-foreground focus:ring-2 focus:ring-accent focus:border-transparent"
         />
       </div>
       <button
         type="submit"
-        className="w-full bg-primary text-accent font-extrabold rounded-lg py-2 hover:bg-primary-light transition"
+        className="w-full bg-accent text-accent-foreground font-bold rounded-lg py-3 hover:bg-accent/90 transition-all transform hover:scale-105 uppercase tracking-wide"
         disabled={loading}
       >
         {loading ? "Loading..." : mode === "login" ? "Login" : "Register"}
       </button>
       {message && (
-        <div className={`text-center ${message.type === "error" ? "text-red-600" : "text-green-700"} mt-2`}>{message.text}</div>
+        <div className={`text-center mt-4 font-semibold ${message.type === "error" ? "text-red-400" : "text-accent"}`}>
+          {message.text}
+        </div>
       )}
     </form>
   );

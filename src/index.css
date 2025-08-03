@@ -5,21 +5,29 @@
 
 @layer base {
   :root {
-    --background: 249 41% 97%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 145 20% 15%;  /* dark green background */
+    --foreground: 145 10% 90%;
+    --card: 145 15% 20%;
+    --card-foreground: 145 10% 90%;
+    --muted: 145 15% 25%;
+    --muted-foreground: 145 10% 70%;
+    --border: 145 15% 30%;
+    --input: 145 15% 25%;
 
-    --primary: 145 55% 22%;   /* dark green */
-    --primary-foreground: 145 60% 90%;
-    --accent: 48 95% 54%;     /* gold */
-    --accent-foreground: 145 60% 22%;
+    --primary: 145 30% 25%;   /* medium green */
+    --primary-foreground: 145 10% 90%;
+    --secondary: 145 20% 30%;
+    --secondary-foreground: 145 10% 90%;
+    --accent: 48 95% 54%;     /* gold/yellow */
+    --accent-foreground: 145 60% 15%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
   }
 
   html, body {
-    
     font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-    background-color: #f9fafb;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
   #lovable-badge{display:none!important}
 }

@@ -28,24 +28,30 @@ const FAQ = () => {
   const [open, setOpen] = useState<number | null>(null);
 
   return (
-    <div className="container max-w-2xl py-14 animate-fade-in">
-      <h1 className="text-3xl font-bold text-primary mb-7">FAQ</h1>
-      <ul className="space-y-3">
-        {faqs.map((f, idx) => (
-          <li key={f.q}>
-            <button
-              onClick={() => setOpen(open === idx ? null : idx)}
-              className="flex w-full justify-between items-center py-3 px-5 bg-primary-light text-primary rounded-xl hover:bg-primary transition font-semibold"
-            >
-              <span>{f.q}</span>
-              <span>{open === idx ? "-" : "+"}</span>
-            </button>
-            <div className={`bg-white rounded-b-xl shadow px-5 py-4 text-primary text-[15px] transition-all duration-200 ${open === idx ? "block" : "hidden"}`}>
-              {f.a}
+    <div className="min-h-screen bg-background py-12">
+      <div className="container max-w-3xl mx-auto px-4">
+        <h1 className="text-3xl font-bold text-center text-foreground mb-12">FAQ</h1>
+        <div className="space-y-4">
+          {faqs.map((f, idx) => (
+            <div key={f.q} className="bg-card rounded-xl overflow-hidden shadow-lg">
+              <button
+                onClick={() => setOpen(open === idx ? null : idx)}
+                className="flex w-full justify-between items-center py-4 px-6 bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-all font-semibold text-left"
+              >
+                <span className="text-lg">{f.q}</span>
+                <span className="text-2xl font-bold ml-4 flex-shrink-0">
+                  {open === idx ? "−" : "+"}
+                </span>
+              </button>
+              {open === idx && (
+                <div className="bg-card border-t border-border px-6 py-4 text-card-foreground">
+                  <p className="leading-relaxed">{f.a}</p>
+                </div>
+              )}
             </div>
-          </li>
-        ))}
-      </ul>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

@@ -131,41 +131,45 @@ const Opportunities = () => {
 
   if (loading) {
     return (
-      <div className="container py-12">
-        <h1 className="text-3xl font-bold text-primary mb-8">Browse Volunteer Opportunities</h1>
-        <div className="text-center py-8 text-gray-500">Loading opportunities...</div>
+      <div className="min-h-screen bg-background py-12">
+        <div className="container mx-auto px-4">
+          <h1 className="text-3xl font-bold text-center text-foreground mb-8">Browse Volunteer Opportunities</h1>
+          <div className="text-center py-8 text-muted-foreground">Loading opportunities...</div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container py-12">
-      <h1 className="text-3xl font-bold text-primary mb-8">Browse Volunteer Opportunities</h1>
-      
-      <OpportunityFilters 
-        filters={filters}
-        onFilterChange={handleFilterChange}
-        onClearFilters={handleClearFilters}
-      />
-      
-      <div className="mb-4 text-sm text-gray-600">
-        Showing {filteredOpportunities.length} of {opportunities.length} opportunities
-      </div>
-      
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {filteredOpportunities.map((op) => (
-          <OpportunityCard op={op} key={op.id} />
-        ))}
-      </div>
-      
-      {filteredOpportunities.length === 0 && (
-        <div className="text-center py-12 text-gray-500">
-          {opportunities.length === 0 
-            ? "No volunteer opportunities available at this time." 
-            : "No opportunities match your current filters. Try adjusting your search criteria."
-          }
+    <div className="min-h-screen bg-background py-12">
+      <div className="container mx-auto px-4">
+        <h1 className="text-3xl font-bold text-center text-foreground mb-8">Browse Volunteer Opportunities</h1>
+        
+        <OpportunityFilters 
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          onClearFilters={handleClearFilters}
+        />
+        
+        <div className="mb-6 text-sm text-muted-foreground text-center">
+          Showing {filteredOpportunities.length} of {opportunities.length} opportunities
         </div>
-      )}
+        
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {filteredOpportunities.map((op) => (
+            <OpportunityCard op={op} key={op.id} />
+          ))}
+        </div>
+        
+        {filteredOpportunities.length === 0 && (
+          <div className="text-center py-12 text-muted-foreground">
+            {opportunities.length === 0 
+              ? "No volunteer opportunities available at this time." 
+              : "No opportunities match your current filters. Try adjusting your search criteria."
+            }
+          </div>
+        )}
+      </div>
     </div>
   );
 };

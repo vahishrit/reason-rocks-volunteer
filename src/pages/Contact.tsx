@@ -15,35 +15,40 @@ const Contact = () => {
   };
 
   return (
-    <div className="container py-14 max-w-xl animate-fade-in">
-      <h1 className="text-3xl font-bold text-primary mb-4">Contact</h1>
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow space-y-5">
-        <div>
-          <label className="block font-semibold mb-1 text-primary">Name</label>
-          <input
-            className="w-full border rounded-lg px-4 py-2"
-            name="name" value={form.name} required onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label className="block font-semibold mb-1 text-primary">Email</label>
-          <input
-            className="w-full border rounded-lg px-4 py-2"
-            name="email" type="email" value={form.email} required onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label className="block font-semibold mb-1 text-primary">Message</label>
-          <textarea
-            className="w-full border rounded-lg px-4 py-2"
-            name="message" rows={5} value={form.message} required onChange={handleChange}
-          />
-        </div>
-        <button type="submit" className="w-full bg-primary text-accent rounded-lg py-2 font-bold hover:bg-primary-light transition">
-          {sent ? "Sent!" : "Send Message"}
-        </button>
-        {sent && <p className="text-green-800 mt-2">Message sent — thank you!</p>}
-      </form>
+    <div className="min-h-screen flex items-center justify-center bg-background py-12">
+      <div className="w-full max-w-md mx-4">
+        <h1 className="text-3xl font-bold text-center text-foreground mb-8">CONTACT</h1>
+        <form onSubmit={handleSubmit} className="bg-card rounded-2xl p-8 shadow-2xl space-y-6">
+          <div>
+            <label className="block font-semibold mb-2 text-card-foreground">Name</label>
+            <input
+              className="w-full bg-input border border-border rounded-lg px-4 py-3 text-card-foreground focus:ring-2 focus:ring-accent focus:border-transparent"
+              name="name" value={form.name} required onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label className="block font-semibold mb-2 text-card-foreground">Email</label>
+            <input
+              className="w-full bg-input border border-border rounded-lg px-4 py-3 text-card-foreground focus:ring-2 focus:ring-accent focus:border-transparent"
+              name="email" type="email" value={form.email} required onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label className="block font-semibold mb-2 text-card-foreground">Message</label>
+            <textarea
+              className="w-full bg-input border border-border rounded-lg px-4 py-3 text-card-foreground focus:ring-2 focus:ring-accent focus:border-transparent resize-none"
+              name="message" rows={6} value={form.message} required onChange={handleChange}
+            />
+          </div>
+          <button 
+            type="submit" 
+            className="w-full bg-accent text-accent-foreground rounded-lg py-3 font-bold hover:bg-accent/90 transition-all transform hover:scale-105"
+          >
+            {sent ? "SENT!" : "SEND MESSAGE"}
+          </button>
+          {sent && <p className="text-accent text-center mt-4 font-semibold">Message sent — thank you!</p>}
+        </form>
+      </div>
     </div>
   );
 };

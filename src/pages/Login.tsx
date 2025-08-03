@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthForm from "@/components/AuthForm";
@@ -13,12 +12,17 @@ const Login = () => {
   }, [user]);
 
   return (
-    <div className="flex flex-col items-center pt-20 bg-background min-h-screen">
-      <h1 className="text-3xl font-bold text-primary mb-4">Login</h1>
-      <AuthForm mode="login" />
-      <div className="mt-4 text-center">
-        <span className="text-gray-700">Don’t have an account? </span>
-        <a href="/register" className="text-primary hover:text-accent font-semibold underline">Register</a>
+    <div className="min-h-screen flex items-center justify-center bg-background relative">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-secondary/20"></div>
+      <div className="relative z-10 w-full max-w-md mx-4">
+        <div className="bg-card/90 backdrop-blur-sm shadow-2xl rounded-2xl p-8">
+          <h1 className="text-3xl font-bold text-center text-card-foreground mb-8">LOGIN</h1>
+          <AuthForm mode="login" />
+          <div className="mt-6 text-center">
+            <span className="text-muted-foreground">Don't have an account? </span>
+            <a href="/register" className="text-accent hover:text-accent/80 font-semibold underline">Register</a>
+          </div>
+        </div>
       </div>
     </div>
   );
