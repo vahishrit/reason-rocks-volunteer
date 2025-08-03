@@ -72,14 +72,14 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background py-12">
+    <div className="min-h-screen py-12" style={{ backgroundColor: 'hsl(145, 25%, 20%)' }}>
       <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-sunborn font-bold text-foreground mb-3">
-          Welcome, {user?.full_name || 'Student'}!
+        <h1 className="text-3xl font-sunborn font-bold mb-3" style={{ color: 'hsl(45, 15%, 85%)' }}>
+          Welcome!
         </h1>
         <div className="mb-8">
-          <span className="text-lg text-foreground">
-            Total Approved Hours: <b>{totalApprovedHours}</b>
+          <span className="text-lg" style={{ color: 'hsl(48, 95%, 54%)' }}>
+            Total approved hours: <b>{totalApprovedHours}</b>
           </span>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
